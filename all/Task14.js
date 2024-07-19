@@ -194,7 +194,7 @@ function editRoutesMethod(routes, subscriptions) {
         const sub = map.get(route.name);
 
         // check if sub is subscribed or not
-        if (!sub || !sub.isSub) {
+        if (!sub.isSub) {
 
             // If the module is not subscribed 
             if (route.comp) route.comp = 'UN';
@@ -205,7 +205,7 @@ function editRoutesMethod(routes, subscriptions) {
                     sub.comp = 'UN'; // mark comp field in subcomponent to 'UN'
                     
                     // recursively travel to the subcomponents and update their routes as well
-                    if (sub.subComp)editFunction(sub);
+                    if (sub.subComp) editFunction(sub);
 
                     // return subcomp
                     return sub;
@@ -218,20 +218,12 @@ function editRoutesMethod(routes, subscriptions) {
                 // loop through subcomponent as well to update the components and subcomp also
                 route.subComp = route.subComp.map(sub => {
                     const subSub = sub.subMod ? sub.subMod.find(s => s.name === sub.name) : null;
-                    if (subSub && subSub.isSub) {
-
+                    if (subSub.isSub) {
                         // check is for if subcomponent is present or not
-                        if (sub.subComp) {
-                            editFunction(sub);
-                        }
+                        if (sub.subComp) editFunction(sub);
                     } 
                     else {
                         sub.comp = 'UN';
-                        
-                        // check is for if subcomponent is present or not
-                        if (sub.subComp) {
-                            editFunction(sub);
-                        }
                     }
 
                     return sub;
@@ -247,7 +239,7 @@ function editRoutesMethod(routes, subscriptions) {
     // to get the first subscribed module
     const firstModule = subscriptions.find(sub => sub.isSub);
 
-    // adding redirecting to the final object
+    // adding redirecting_to final answer
     if (firstModule) {
         updatedRoutes = [{
             redirectTo: firstModule.name
