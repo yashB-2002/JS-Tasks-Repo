@@ -21,19 +21,23 @@ function sumNestedArray(arr) {
 
 function flatten(ary) {
     return ary.reduce(function(a, b) {
+     // check if the b is array then it is new input to the function (flattening of it is required separately).
       if (Array.isArray(b)) {
         console.log(a);
         return a.concat(flatten(b))
       }
+
+     // if b is not array which means it is simple primitive value, it is added as it is to current single array. 
       return a.concat(b)
-    }, [])
+    }, []) // initial value of accumulator is []
 }
 
+// FLAtten function with reduce method
 let flattenReduce = (ary) => ary.reduce((a, b) => a.concat(Array.isArray(b) ? flattenReduce(b) : b), [])
 
 console.log(sumNestedArray([1, [2, [3, 4,[5,6,4]]], 5]));
 
-
+// -----------------DRY RUN-------------------------
 // [1, [2, [3, 4]], 5]
 // []->acc, curr-1
 // [1]->acc, curr-[2,[3,4]]
