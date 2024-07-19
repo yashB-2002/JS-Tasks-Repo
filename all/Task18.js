@@ -39,8 +39,7 @@ class Promise{
 
         this.status = 'pending'; // to keep track of current status of promise
         this.value= '';  // value to pass on to the callbacks for executing them
-        this.onFullfilledCb = []; // array to keep track of callbacks to run on resolved promise
-        this.onRejectCb = [] // array to keep track of callbacks to run on rejected promise
+        this.handlers = [];
         
 
 
@@ -51,7 +50,7 @@ class Promise{
         if(this.status === 'pending') {
             this.status = 'fullfilled';
             this.value = value;
-            this.onFullfilledCb.forEach(cb => cb(value))
+            this.handlers.forEach(cb => cb.onFulfilled(value))
         }
      };
 
@@ -62,43 +61,38 @@ class Promise{
         if(this.status === 'pending') {
             this.status = 'rejected';
             this.value = value;
-            this.onRejectCb.forEach(cb => cb(value))
+            this.handlers.forEach(cb => cb.onRejected(value))
         }
      };
 
       // here executed the executor function
-     try{
-        executor(resolve,reject);
-     }
-     catch(e){
-        reject(e.message)
-     }
+      executor(resolve,reject);
     }
 
     // Method to run callbacks for fulfilled and rejection case
     then(onFulfilled, onRejected) {
-        if(this.status === 'fullfilled'){
-            onFulfilled(this.value)
-        }
-        else if(this.status == 'rejected') {
-            onRejected(this.value);
-        }
-        else {
-            this.onFullfilledCb.push(onFulfilled)
-            this.onRejectCb.push(onRejected)
-        }
+        return new Promise((resolve,reject) => {
+            if(this.status=='fullfilled') {
+                setTimeout(()=>{
+                    resolve(onFulfilled(this.value))
+                })
+            }
+            else if(this.status=='rejected') {
+                setTimeout(()=>{
+                    reject(onRejected(this.value))
+                })
+            } 
+            else{
+                this.handlers.push({onFulfilled,onRejected})
+            }
+        })
     }
 
 }
 
 // example
 const promise = new Promise((resolve, reject) => {
-    setTimeout(() => resolve('Resolved!'), 1000);
+    setTimeout(() => resolve('resolved'), 1000);
 });
 
 promise.then(value => console.log(value))
-
-
-
-
-
